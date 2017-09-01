@@ -4,6 +4,7 @@ import processing.event.*;
 import processing.opengl.*; 
 
 import gab.opencv.*; 
+import java.util.*; 
 
 import java.util.HashMap; 
 import java.util.ArrayList; 
@@ -18,8 +19,13 @@ public class Vector_with_Gen_Algo extends PApplet {
 
 
 
+
 OpenCV opencv;
 PImage src, canny, blur;
+ImageProcessor imgP;
+
+List<Gene> a = new ArrayList<Gene>();
+int box_size = 400;
 
 long start;
 long stop;
@@ -27,37 +33,87 @@ long stop;
 public void setup() {
     src = loadImage("test.jpg");
     
-    noLoop();
-    
+    // noLoop();
+
     start = millis();
 
-    /*opencv = new OpenCV(this, src);
-    opencv.blur(6);
-
-    blur = opencv.getSnapshot();
-
-    opencv.findCannyEdges(int(0xFF * 0.30), int(0xFF * 0.50));
-    canny = opencv.getSnapshot();*/
-
-    ImageProcessor ip = new ImageProcessor(this);
-    canny = ip.getCanny(src);
-
+    imgP = new ImageProcessor(this);
+    canny = imgP.getCanny(src);
 
     stop = millis();
     println("Needed "+ (stop - start) + " milliseconds.");
+
+
+    for (int i=0; i<200; i++)
+        a.add(new Gene(box_size));
 }
 
+float angle = 0;
+boolean is_ani = true;
 
 public void draw() {
+    // PImage screen = get(); - stores frame
+    background(200);
+    camera(cos(radians(angle))*width, 0, sin(radians(angle))*width, 0, 0, 0, 0, 1, 0);
+    
+
+    for (Gene el : a)
+        el.draw(this);
+
     pushMatrix();
-    scale(0.5f);
-    image(src, 0, 0);
-    // image(blur, src.width, 0);
-    image(canny, src.width*2, 0);
+    scale(0.3f);
+    translate(0, 0, box_size / 2 / 0.3f);
+    image(src, -width, -height/2);
+    image(canny, 0, -height/2);
     popMatrix();
 
-    text("Source", 10, 25); 
-    text("Canny", src.width/2 * 2 + 10, 25); 
+    text("Canny", 10, 20, box_size/2 + 1);
+ 
+
+    // the animation procedure
+    if (keyPressed) {
+        if (keyCode == LEFT)
+            angle += 0.5f;
+        else if (keyCode == RIGHT)
+            angle -= 0.5f;
+    } else if (is_ani)
+        angle += 0.5f;
+}
+
+public void keyPressed() {
+    if (key == ' ') {
+        is_ani = !is_ani;
+    }
+}
+/**
+ * This class represents one Gene of the DNA.
+ * In this case, that's one line.
+ **/
+public class Gene {
+
+    PVector v1, v2;
+    int box_size;
+
+    public Gene (int box_size) {
+        this.box_size = box_size;
+        v1 = new PVector(rand(), rand(), rand());
+        v2 = new PVector(rand(), rand(), rand());
+    }
+
+    private float rand() {
+        return random(-box_size/2, box_size/2);
+    }
+
+    public void draw(PApplet app) {
+        app.line(v1.x, v1.y, v1.z, v2.x, v2.y, v2.z);
+    }
+
+}
+public class DNA {
+
+    public DNA () {
+
+    }
 }
 public class ImageProcessor {
 
@@ -80,7 +136,7 @@ public class ImageProcessor {
         return opencv.getSnapshot();
     }
 }
-  public void settings() {  size(829, 511); }
+  public void settings() {  size(600, 600, P3D); }
   static public void main(String[] passedArgs) {
     String[] appletArgs = new String[] { "Vector_with_Gen_Algo" };
     if (passedArgs != null) {

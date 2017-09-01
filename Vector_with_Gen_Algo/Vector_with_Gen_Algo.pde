@@ -59,7 +59,6 @@ void draw() {
             angle -= 0.5;
     } else if (is_ani)
         angle += 0.5;
-    
 }
 
 void keyPressed() {
