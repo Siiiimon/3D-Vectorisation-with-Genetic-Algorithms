@@ -29,10 +29,13 @@ void setup() {
         a.add(new Gene(box_size));
 }
 
+float angle = 0;
+boolean is_ani = true;
+
 void draw() {
     // PImage screen = get(); - stores frame
     background(200);
-    camera(cos(radians(frameCount/2.0))*width, 0, sin(radians(frameCount/2.0))*width, 0, 0, 0, 0, 1, 0);
+    camera(cos(radians(angle))*width, 0, sin(radians(angle))*width, 0, 0, 0, 0, 1, 0);
     
 
     for (Gene el : a)
@@ -46,5 +49,22 @@ void draw() {
     popMatrix();
 
     text("Canny", 10, 20, box_size/2 + 1);
+ 
+
+    // the animation procedure
+    if (is_ani)
+        angle += 0.5;
+    else if (keyPressed) {
+        if (keyCode == LEFT)
+            angle += 0.5;
+        else if (keyCode == RIGHT)
+            angle -= 0.5;
+    }
     
+}
+
+void keyPressed() {
+    if (key == ' ') {
+        is_ani = !is_ani;
+    }
 }
