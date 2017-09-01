@@ -14,7 +14,7 @@ import java.io.InputStream;
 import java.io.OutputStream; 
 import java.io.IOException; 
 
-public class Processing extends PApplet {
+public class Vector_with_Gen_Algo extends PApplet {
 
 
 
@@ -31,13 +31,17 @@ public void setup() {
     
     start = millis();
 
-    opencv = new OpenCV(this, src);
+    /*opencv = new OpenCV(this, src);
     opencv.blur(6);
 
     blur = opencv.getSnapshot();
 
-    opencv.findCannyEdges( PApplet.parseInt(0xFF * 0.30f), PApplet.parseInt(0xFF * 0.50f));
-    canny = opencv.getSnapshot();
+    opencv.findCannyEdges(int(0xFF * 0.30), int(0xFF * 0.50));
+    canny = opencv.getSnapshot();*/
+
+    ImageProcessor ip = new ImageProcessor(this);
+    canny = ip.getCanny(src);
+
 
     stop = millis();
     println("Needed "+ (stop - start) + " milliseconds.");
@@ -48,7 +52,7 @@ public void draw() {
     pushMatrix();
     scale(0.5f);
     image(src, 0, 0);
-    image(blur, src.width, 0);
+    // image(blur, src.width, 0);
     image(canny, src.width*2, 0);
     popMatrix();
 
@@ -57,17 +61,28 @@ public void draw() {
 }
 public class ImageProcessor {
 
-    public ImageProcessor() {
-        
+    private OpenCV opencv;
+    private PApplet app;
+     
+
+    public ImageProcessor(PApplet app) {
+        this.app = app;
     }
 
-    public PImage getStroke() {
-        return null;
+    public PImage getCanny(PImage src) {
+        if (opencv == null || src.width != opencv.width || src.height != opencv.height)
+            opencv = new OpenCV(app, src);
+        else
+            opencv.loadImage(src);
+
+        opencv.blur(6);
+        opencv.findCannyEdges(PApplet.parseInt(0xFF * 0.30f), PApplet.parseInt(0xFF * 0.50f));
+        return opencv.getSnapshot();
     }
 }
   public void settings() {  size(829, 511); }
   static public void main(String[] passedArgs) {
-    String[] appletArgs = new String[] { "Processing" };
+    String[] appletArgs = new String[] { "Vector_with_Gen_Algo" };
     if (passedArgs != null) {
       PApplet.main(concat(appletArgs, passedArgs));
     } else {
