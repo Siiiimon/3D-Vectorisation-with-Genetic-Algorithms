@@ -52,14 +52,13 @@ void draw() {
  
 
     // the animation procedure
-    if (is_ani)
-        angle += 0.5;
-    else if (keyPressed) {
+    if (keyPressed) {
         if (keyCode == LEFT)
             angle += 0.5;
         else if (keyCode == RIGHT)
             angle -= 0.5;
-    }
+    } else if (is_ani)
+        angle += 0.5;
     
 }
 
