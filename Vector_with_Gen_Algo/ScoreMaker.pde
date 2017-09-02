@@ -29,9 +29,9 @@ public class ScoreMaker {
         pg.scale(1.0 / displayDensity());  // to correct my drawing behaviour
         pg.background(0);
 
-        pg.camera(h, 0, 0, 0, 0, 0, 0, 1, 0);
+        pg.camera(0, 0, h, 0, 0, 0, 0, 1, 0);
         // pg.frustum(h/2, -h/2, h/2, -h/2, h/2, h/2*3);
-        pg.ortho(h>>1, -h>>1, h>>1, -h>>1);  // I want to see all lines
+        pg.ortho(-h>>1, h>>1, -h>>1, h>>1);  // I want to see all lines
         // >>1 means / 2
 
         pg.stroke(255);
