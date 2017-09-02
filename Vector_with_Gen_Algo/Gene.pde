@@ -1,6 +1,6 @@
 /**
  * This class represents one Gene of the DNA.
- * In this case, that's one line.
+ * In this case, that's one line in the 3D space.
  **/
 public class Gene {
 
@@ -17,6 +17,9 @@ public class Gene {
         return random(-box_size/2, box_size/2);
     }
 
+    /**
+     * Draws the image on a PGraphics object.
+     **/
     public void draw(PGraphics pg) {
         pg.line(v1.x, v1.y, v1.z, v2.x, v2.y, v2.z);
     }

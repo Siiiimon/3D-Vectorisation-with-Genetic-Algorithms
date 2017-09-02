@@ -1,3 +1,7 @@
+/**
+ * This class represents one DNA with many Genes. It's 
+ * one individual
+ **/
 public class DNA {
 
     public static final int DEFAULT_AMOUNT = 100;
