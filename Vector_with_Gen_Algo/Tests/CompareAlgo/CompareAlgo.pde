@@ -13,46 +13,37 @@ void setup() {
     // opencv.blur(6);
     opencv.findCannyEdges(int(0xFF * 0.30), int(0xFF * 0.50));
     canny = opencv.getSnapshot();
-
-    println("canny: "+canny);
-
-    opencv.loadImage(in01);
-
-    opencv.diff(canny);
-    diff01 = opencv.getSnapshot();
-
-    opencv.loadImage(canny);
-    opencv.diff(in02);
-    diff02 = opencv.getSnapshot();
-
 }
 
 void draw() {
     image(canny, 0, 0);
     image(in01, 100, 0);
-    image(diff01, 0, 100);
-    image(diff02, 100, 100);
 
-    println("score 1: "+calcScore(diff01));
-    println("score 2: "+calcScore(diff02));
+    println("score 1: " + calcScore(canny, in01, 0));
+    println("score 2: " + calcScore(canny, in02, 100));
 }
 
-double calcScore(PImage in1, PImage in2) {
-    double score = 0;
-
+double calcScore(PImage in1, PImage in2, int x) {
     if (in1.width != in2.width || in2.height != in2.height) {
         println("in1 and in2 sizes aren't matching.");
         exit();
     }
 
+    int score = 0;
+    double dim = in1.width * in1.height;
+
+    PImage img = createImage(in1.width, in1.height, RGB);
+    img.loadPixels();
+
     in1.loadPixels();
     in2.loadPixels();
 
-    for (int i=0, i<in1.width * in2.width, i++) {
-        //if(c & 0xFF != 0xFF/2)
-        score += max(min((in1.pixels[i] - in2.pixels[i]) & 0xFF, 255), 0);
+    for (int i=0; i<dim; i++) {
+        int c = max(min(abs( (in1.pixels[i] & 0xFF) - (in2.pixels[i] & 0xFF)), 255), 0);
+        img.pixels[i] = c | c << 8 | c << 16;
+        score += c;
     }
 
-    score /= in1.width * in2.height;
-    return score;
+    image(img, x, 100);
+    return score / dim;
 }

@@ -11,15 +11,16 @@ public class ImageProcessor {
     private PImage addBorder(PImage in) {
         PImage img = createImage(box_size, box_size, RGB);
 
-        in.loadPixels();
         img.loadPixels();
-        
+        in.loadPixels();
 
-        int tmpX = (box_size - in.width) >> 1;
-        int tmpY = (box_size - in.height) >> 1;
-        for (int x = 0; x < in.width; x++)
-            for (int y = 0; y < in.height; y++)
-                img.pixels[ y * box_size + x + tmpY * box_size + tmpX] = in.pixels[y * in.width + x];
+        int tmpX = (box_size - in.width) / 2;
+        int tmpY = (box_size - in.height) / 2;
+        for (int x = 0; x < src.width; x++) {
+            for (int y = 0; y < src.height; y++) {
+                img.pixels[ y * box_size + x] = in.pixels[y * box_size + x];
+            }
+        }
         img.updatePixels();
 
         return img;
@@ -55,17 +56,5 @@ public class ImageProcessor {
         
         return opencv.getSnapshot();
         */
-    }
-
-    public PImage addTransparent(PImage src) {
-        PImage img = createImage(src.width, src.height, ARGB);
-        img.loadPixels();
-        src.loadPixels();
-
-        for (int i = 0; i < src.width * src.height; ++i)
-            img.pixels[i] = (src.pixels[i] & 0xFFFFFF) | 0x7f000000;
-
-        img.updatePixels();
-        return img;
     }
 }
