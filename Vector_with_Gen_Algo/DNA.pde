@@ -1,5 +1,5 @@
 /**
- * This class represents one DNA with many Genes. It's 
+ * This class represents one DNA with many Genes. It's
  * one individual
  **/
 public class DNA {
@@ -9,6 +9,8 @@ public class DNA {
 
     final int amount;
     final int box_size;
+    public double score;
+    public ScoreMaker sm;
     List<Gene> genes = new ArrayList<Gene>();
 
     public DNA (short box_size, int amount) {
@@ -38,5 +40,27 @@ public class DNA {
 
     public List<Gene> getGenes() {
         return genes;
+    }
+
+    public void score(PImage can) {
+      sm = new ScoreMaker();  // creates the score maker class
+      start = millis();  // timer for score calculation
+      try {
+          this.score = sm.calcScore(this, can);  // calcs score
+      } catch (Exception e) {  // because I throw an exception, this is needed…
+          e.printStackTrace(); // verbose mode mark
+      }
+      stop = millis();
+      //maybe we should implement verbosity levels some time
+      println("Score calc.: "+ (stop - start) + " ms.");
+
+      start = millis();
+      rendered = sm.renderDNA(indi);
+      stop = millis();
+      println("Renderer calc.: "+ (stop - start) + " ms.");
+    }
+
+    public double getScore() {
+      return this.score;
     }
 }

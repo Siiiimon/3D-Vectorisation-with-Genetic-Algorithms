@@ -4,11 +4,11 @@
 public class ScoreMaker {
 
     public ScoreMaker() {
-        
+
     }
 
     /**
-     * Renders the DNA. This is more than the DNA.draw() method, 
+     * Renders the DNA. This is more than the DNA.draw() method,
      * because here, I also specifiy the colors, perspective, camera, …
      * in way that I can actually compare it to my edge image.
      * @param individual The DNA to display
@@ -16,13 +16,13 @@ public class ScoreMaker {
      **/
     public PGraphics renderDNA(DNA individual) {
         int h = individual.box_size;
-        /* I need to divide by the displayDensity() here, 
-        because createGrapics() otherwise creates an image with 
-        (h * displayDensity())^2 pixels. (It still says that the 
-        width and height is each h.) And Because I later use the 
+        /* I need to divide by the displayDensity() here,
+        because createGrapics() otherwise creates an image with
+        (h * displayDensity())^2 pixels. (It still says that the
+        width and height is each h.) And Because I later use the
         raw pixel data, I need h^2 pixels and not (h * displayDensity())^2
         */
-        PGraphics pg = createGraphics(h / displayDensity(), 
+        PGraphics pg = createGraphics(h / displayDensity(),
             h / displayDensity(), P3D);  // creates a 3D scene
         pg.beginDraw();
 
@@ -49,18 +49,18 @@ public class ScoreMaker {
      * substract (with absolute value) them by each other and taking the
      * average.<br>
      * This has the effect, that the image, that has the most intersections
-     * with my source image has the lowest score. Which means: The lower the 
+     * with my source image has the lowest score. Which means: The lower the
      * score the better!!!!!!
      *
      * @param individual The DNA to score
      * @param grand_filter The canny image to compare to
-     * @return double A score how far apart the two images are. 
+     * @return double A score how far apart the two images are.
      *      e.g. the lower the better!!!
      * @throws Exception Occours, when the grand_filter width or height isn't
      *      the box_size.
      **/
     public double calcScore(DNA individual, PImage grand_filter) throws Exception {
-        if (grand_filter.width != individual.box_size 
+        if (grand_filter.width != individual.box_size
             || grand_filter.height != individual.box_size)
             throw new Exception("The grand_filter image doesn't have the" +
                 "width / height as the DNA box_size provides. " +
@@ -79,7 +79,7 @@ public class ScoreMaker {
         grand_filter.loadPixels();
 
         for (int i=0; i<pow(box_size, 2); i++) {
-            int c = max(min(abs( (grand_filter.pixels[i] & 0xFF) 
+            int c = max(min(abs( (grand_filter.pixels[i] & 0xFF)
                 - (pg.pixels[i] & 0xFF)), 255), 0);
             // img.pixels[i] = c | c << 8 | c << 16;
             score += c;
@@ -87,7 +87,7 @@ public class ScoreMaker {
 
         // img.updatePixels();
 
-        // println("score: "+ (score / pow(individual.box_size,2)));
+        println("score: "+ (score / pow(individual.box_size,2)));
         // return score / dim;
         //return img;
         return score / pow(individual.box_size,2);

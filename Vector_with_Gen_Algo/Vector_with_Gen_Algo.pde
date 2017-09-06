@@ -26,25 +26,10 @@ void setup() {
     canny = imgP.getCanny(src, box_size);  // calculates edge detected image
 
     stop = millis();  // stops timer
-    println("Canny calc.: "+ (stop - start) + " ms.");
 
     indi = new DNA(box_size);  // initalizes one individual [testing]
 
-    ScoreMaker sm = new ScoreMaker();  // creates the score maker class
-
-    start = millis();  // timer for score calculation
-    try {
-        score = sm.calcScore(indi, canny);  // calcs score 
-    } catch (Exception e) {  // because I throw an exception, this is needed…
-        e.printStackTrace();
-    }
-    stop = millis();  // stops timer
-    println("Score calc.: "+ (stop - start) + " ms.");
-
-    start = millis();
-    rendered = sm.renderDNA(indi);
-    stop = millis();
-    println("Renderer calc.: "+ (stop - start) + " ms.");
+    indi.score(canny); // pass in indi, cause it's just for testing for now
 
     if (orthogonal)
         ortho();
@@ -64,9 +49,9 @@ boolean show_canny = true;
 
 void draw() {
     background(0);  // black background
-    camera(cos(radians(angle))*box_size*1.5, 0, sin(radians(angle))*box_size*1.5, 
+    camera(cos(radians(angle))*box_size*1.5, 0, sin(radians(angle))*box_size*1.5,
         0, 0, 0, 0, 1, 0);  // for rotation
-    
+
     /**** The block down here is [testing] ****/
     stroke(150);  // lines, that look like transparent
     indi.draw(g);  // drawing my current individual
@@ -74,7 +59,7 @@ void draw() {
     translate(0, 0, 200);
     hint(DISABLE_DEPTH_TEST);  // so that I can see the lines through my image
     image(show_canny ? canny : rendered, -200, -200, 400, 400);  // the cannyed result I want to get to
-    text(String.format("Score: %.3f", score) , -180, -170, 1);  // the current score
+    text(String.format("Score: %.3f", indi.getScore()) , -180, -170, 1);  // the current score
     translate(0, 0, -400);
 
     // the animation procedure and controls
