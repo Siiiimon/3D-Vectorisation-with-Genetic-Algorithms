@@ -1,7 +1,7 @@
 /**
- * This class represents one DNA with many Genes. It's
- * one individual
- **/
+* This class represents one DNA with many Genes. It's
+* one individual
+**/
 public class DNA {
 
     public static final int DEFAULT_AMOUNT = 100;
@@ -35,7 +35,7 @@ public class DNA {
 
     public void draw(PGraphics pg) {
         for (Gene gene : genes)
-            gene.draw(pg);
+        gene.draw(pg);
     }
 
     public List<Gene> getGenes() {
@@ -43,24 +43,28 @@ public class DNA {
     }
 
     public void score(PImage can) {
-      sm = new ScoreMaker();  // creates the score maker class
-      start = millis();  // timer for score calculation
-      try {
-          this.score = sm.calcScore(this, can);  // calcs score
-      } catch (Exception e) {  // because I throw an exception, this is needed…
-          e.printStackTrace(); // verbose mode mark
-      }
-      stop = millis();
-      //maybe we should implement verbosity levels some time
-      println("Score calc.: "+ (stop - start) + " ms.");
+        sm = new ScoreMaker();  // creates the score maker class
+        start = millis();  // timer for score calculation
+        try {
+            this.score = sm.calcScore(this, can);  // calcs score
+            } catch (Exception e) {  // because I throw an exception, this is needed…
+                e.printStackTrace(); // verbose mode mark
+            }
+            stop = millis();
+            //maybe we should implement verbosity levels some time
+            // println("Score calc.: "+ (stop - start) + " ms.");
 
-      start = millis();
-      rendered = sm.renderDNA(indi);
-      stop = millis();
-      println("Renderer calc.: "+ (stop - start) + " ms.");
+            start = millis();
+            rendered = sm.renderDNA(this);
+            stop = millis();
+            // println("Renderer calc.: "+ (stop - start) + " ms.");
     }
 
     public double getScore() {
-      return this.score;
+        return this.score;
     }
+
+    // public void mutate() {
+    //     // pass
+    // }
 }

@@ -23,7 +23,8 @@ public class Vector_with_Gen_Algo extends PApplet {
 OpenCV opencv;
 PImage src, canny, rendered;
 ImageProcessor imgP;
-DNA indi;  // one individual [testing]
+Population pop;
+DNA best;
 
 short box_size = 400;
 long start, stop;
@@ -46,9 +47,8 @@ public void setup() {
 
     stop = millis();  // stops timer
 
-    indi = new DNA(box_size);  // initalizes one individual [testing]
-
-    indi.score(canny); // pass in indi, cause it's just for testing for now
+    pop = new Population();
+    best = pop.getBest();
 
     if (orthogonal)
         ortho();
@@ -73,13 +73,15 @@ public void draw() {
 
     /**** The block down here is [testing] ****/
     stroke(150);  // lines, that look like transparent
-    indi.draw(g);  // drawing my current individual
+    best.draw(g);  // drawing my current individual
 
     translate(0, 0, 200);
     hint(DISABLE_DEPTH_TEST);  // so that I can see the lines through my image
     image(show_canny ? canny : rendered, -200, -200, 400, 400);  // the cannyed result I want to get to
-    text(String.format("Score: %.3f", indi.getScore()) , -180, -170, 1);  // the current score
+    text(String.format("Score: %.3f", best.getScore()) , -180, -170, 1);  // the current score
     translate(0, 0, -400);
+
+    // pop = new Population(best);
 
     // the animation procedure and controls
     if (keyPressed) {
@@ -110,9 +112,9 @@ public void keyPressed() {
         is_ani = !is_ani;
 }
 /**
- * This class represents one DNA with many Genes. It's
- * one individual
- **/
+* This class represents one DNA with many Genes. It's
+* one individual
+**/
 public class DNA {
 
     public static final int DEFAULT_AMOUNT = 100;
@@ -146,7 +148,7 @@ public class DNA {
 
     public void draw(PGraphics pg) {
         for (Gene gene : genes)
-            gene.draw(pg);
+        gene.draw(pg);
     }
 
     public List<Gene> getGenes() {
@@ -154,26 +156,30 @@ public class DNA {
     }
 
     public void score(PImage can) {
-      sm = new ScoreMaker();  // creates the score maker class
-      start = millis();  // timer for score calculation
-      try {
-          this.score = sm.calcScore(this, can);  // calcs score
-      } catch (Exception e) {  // because I throw an exception, this is needed\u2026
-          e.printStackTrace(); // verbose mode mark
-      }
-      stop = millis();
-      //maybe we should implement verbosity levels some time
-      println("Score calc.: "+ (stop - start) + " ms.");
+        sm = new ScoreMaker();  // creates the score maker class
+        start = millis();  // timer for score calculation
+        try {
+            this.score = sm.calcScore(this, can);  // calcs score
+            } catch (Exception e) {  // because I throw an exception, this is needed\u2026
+                e.printStackTrace(); // verbose mode mark
+            }
+            stop = millis();
+            //maybe we should implement verbosity levels some time
+            // println("Score calc.: "+ (stop - start) + " ms.");
 
-      start = millis();
-      rendered = sm.renderDNA(indi);
-      stop = millis();
-      println("Renderer calc.: "+ (stop - start) + " ms.");
+            start = millis();
+            rendered = sm.renderDNA(this);
+            stop = millis();
+            // println("Renderer calc.: "+ (stop - start) + " ms.");
     }
 
     public double getScore() {
-      return this.score;
+        return this.score;
     }
+
+    // public void mutate() {
+    //     // pass
+    // }
 }
 /**
  * This class represents one Gene of the DNA.
@@ -287,16 +293,45 @@ public class ImageProcessor {
     }
 }
 public class Population {
-  int amount = 0;
-  List<DNA> dnas = new ArrayList<DNA>();
+    int amount = 20;
+    int bestScoreIndex;
+    double maxScore;
+    DNA lastDna;
+    ArrayList<DNA> dnas = new ArrayList<DNA>();
 
-  public Population(int amount) {
-    this.amount = amount;
-  }
+    public Population() {
+        dnas.clear();
+        for(int i = 0; i < amount; i++) {
+            dnas.add(new DNA(box_size));
+            dnas.get(i).score(canny);
+            if (dnas.get(i).getScore() > maxScore) {
+                maxScore = dnas.get(i).getScore();
+                bestScoreIndex = i;
+            }
+        }
+        println("best score: " + maxScore);
+    }
 
-  public List<DNA> getDnas() {
-    return dnas;
-  }
+    // public Population(DNA lastDna) {
+    //     dnas.clear();
+    //     for(int i = 0; i < amount; i++) {
+    //         dnas.add(lastDna.mutate());
+    //         dnas.get(i).score(canny);
+    //         if (dnas.get(i).getScore() > maxScore) {
+    //             maxScore = dnas.get(i).getScore();
+    //             bestScoreIndex = i;
+    //         }
+    //     }
+    //     println("best score: " + maxScore);
+    // }
+
+    public DNA getBest() {
+        return dnas.get(bestScoreIndex);
+    }
+
+    public List<DNA> getDnas() {
+        return dnas;
+    }
 }
 /**
  * This class is responsible for calculating the score of an individual.
@@ -387,7 +422,7 @@ public class ScoreMaker {
 
         // img.updatePixels();
 
-        println("score: "+ (score / pow(individual.box_size,2)));
+        // println("score: "+ (score / pow(individual.box_size,2)));
         // return score / dim;
         //return img;
         return score / pow(individual.box_size,2);

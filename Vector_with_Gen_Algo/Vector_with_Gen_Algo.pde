@@ -4,7 +4,8 @@ import java.util.*;
 OpenCV opencv;
 PImage src, canny, rendered;
 ImageProcessor imgP;
-DNA indi;  // one individual [testing]
+Population pop;
+DNA best;
 
 short box_size = 400;
 long start, stop;
@@ -27,9 +28,8 @@ void setup() {
 
     stop = millis();  // stops timer
 
-    indi = new DNA(box_size);  // initalizes one individual [testing]
-
-    indi.score(canny); // pass in indi, cause it's just for testing for now
+    pop = new Population();
+    best = pop.getBest();
 
     if (orthogonal)
         ortho();
@@ -54,13 +54,15 @@ void draw() {
 
     /**** The block down here is [testing] ****/
     stroke(150);  // lines, that look like transparent
-    indi.draw(g);  // drawing my current individual
+    best.draw(g);  // drawing my current individual
 
     translate(0, 0, 200);
     hint(DISABLE_DEPTH_TEST);  // so that I can see the lines through my image
     image(show_canny ? canny : rendered, -200, -200, 400, 400);  // the cannyed result I want to get to
-    text(String.format("Score: %.3f", indi.getScore()) , -180, -170, 1);  // the current score
+    text(String.format("Score: %.3f", best.getScore()) , -180, -170, 1);  // the current score
     translate(0, 0, -400);
+
+    // pop = new Population(best);
 
     // the animation procedure and controls
     if (keyPressed) {

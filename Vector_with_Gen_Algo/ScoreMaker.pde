@@ -87,7 +87,7 @@ public class ScoreMaker {
 
         // img.updatePixels();
 
-        println("score: "+ (score / pow(individual.box_size,2)));
+        // println("score: "+ (score / pow(individual.box_size,2)));
         // return score / dim;
         //return img;
         return score / pow(individual.box_size,2);
